@@ -1,0 +1,141 @@
+* [[pdf:dir1/dir1-2/textX.pdf][dir1/dir1-2/textX.pdf]]
+** [[pdf:dir1/dir1-2/textX.pdf::86][We provide some standard scope providers: � textx...., page 86]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 12:38:28.898 UTC
+:END:
+#+begin_quote
+We provide some standard scope providers: � textx.scoping.providers.PlainName : This is the
+default provider of textX. It implements global naming within one model (model file/string) without
+namespaces. � textx.scoping.providers.FQN : This is a provider similar to Java or Xtext name loopup
+within one model (model file/string). Example: see tests/ test_scoping/test_full_qualified_name.py.
+#+end_quote
+
+Lets see if this works?
+
+* [[pdf:dir1/dir1-1/emacs.pdf][dir1/dir1-1/emacs.pdf]]
+** Defining Fontsets
+*** [[pdf:dir1/dir1-1/emacs.pdf::259][Bold, italic, and bold-italic variants of the stan..., page 259]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 12:37:32.453 UTC
+:END:
+#+begin_quote
+Bold, italic, and bold-italic variants of the standard fontset are created automatically. Their
+names have �bold� instead of �medium�, or �i� instead of �r�, or both.
+#+end_quote
+
+And here is an annotation from Emacs book
+
+** Viewing Image Thumbnails in Dired
+*** [[pdf:dir1/dir1-1/emacs.pdf::425][Wdired is a special mode that allows you to perfor..., page 425]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 12:38:06.488 UTC
+:END:
+#+begin_quote
+Wdired is a special mode that allows you to perform file operations by editing the Dired buffer
+directly (the �W� in �Wdired� stands for �writable�). To enter Wdired mode, type C-x C-q (dired-
+toggle-read-only) while in a Dired buffer. Alternatively, use the �Immediate / Edit File Names� menu
+item. While in Wdired mode, you can rename files by editing the file names displayed in the Dired
+buffer. All the ordinary Emacs editing commands, including rectangle operations and query-replace,
+are available for this. Once you are done editing, type C-c C-c (wdired-finish-edit). This applies
+your changes and switches back to ordinary Dired mode. Apart from simply renaming files, you can
+move a file to another directory by typing in the new file name (either absolute or relative). To
+mark a file for deletion, delete the entire file name. To change the target of a symbolic link, edit
+the link target name which appears next to the link name.
+#+end_quote
+
+* [[pdf:dir1/dir1-1/orgguide.pdf][dir1/dir1-1/orgguide.pdf]]
+** Multi-state Workflow
+*** [[pdf:dir1/dir1-1/orgguide.pdf::14][Show the global TODO list. Collects the TODO items..., page 14]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 12:35:42.094 UTC
+:END:
+#+begin_quote
+Show the global TODO list. Collects the TODO items (with not-DONE states) from all agenda files (see
+Chapter 10 [Agenda Views], page 23) into a single buffer. See Section 10.4 [Global TODO List], page
+24, for more information.
+#+end_quote
+
+This is an embedded text just for testing
+
+*** [[pdf:dir1/dir1-1/orgguide.pdf::14][Org mode provides methods to give you an overview ..., page 14]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 12:36:13.100 UTC
+:END:
+#+begin_quote
+Org mode provides methods to give you an overview of all the things that you have to do, collected
+from many files.
+#+end_quote
+
+** Include Files
+*** [[pdf:dir1/dir1-1/orgguide.pdf::35][12.2 Export Settings The exporter recognizes speci..., page 35]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 12:36:32.783 UTC
+:END:
+#+begin_quote
+12.2 Export Settings The exporter recognizes special lines in the buffer which provide additional
+information. These lines may be put anywhere in the file:
+#+end_quote
+
+Just a little more embedded text for testing
+
+*** [[pdf:dir1/dir1-1/orgguide.pdf::35][The table of contents includes all headlines in th..., page 35]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 12:37:16.627 UTC
+:END:
+#+begin_quote
+The table of contents includes all headlines in the document. Its depth is therefore the same as
+the headline levels in the file. If you need to use a different depth, or turn it off entirely,
+set the org-export-with-toc variable accordingly. You can achieve the same on a per file basis,
+using the following �toc� item in �OPTIONS� keyword: #+OPTIONS: toc:2 (only include two levels in
+TOC) #+OPTIONS: toc:nil (no default TOC at all) Org normally inserts the table of contents directly
+before the first headline of the file.
+#+end_quote
+
+* [[pdf:dir2/Rustemo book.pdf][dir2/Rustemo book.pdf]]
+** [[pdf:dir2/Rustemo book.pdf::5][Each grammar file consists of two parts: � derivat..., page 5]]
+:PROPERTIES:
+:DATETIME: 2024-04-20 09:45:38.664 UTC
+:END:
+#+begin_quote
+Each grammar file consists of two parts: � derivation/production rules, � terminal definitions which
+are written after the keyword terminals .
+#+end_quote
+
+This is an example of embedded text inside annotation
+
+** [[pdf:dir2/Rustemo book.pdf::6][String recognizer is defined as a plain string ins..., page 6]]
+:PROPERTIES:
+:DATETIME: 2024-04-19 18:35:12.589 UTC
+:END:
+#+begin_quote
+String recognizer is defined as a plain string inside single or double quotes. For example, in a
+grammar rule:
+#+end_quote
+
+** [[pdf:dir2/Rustemo book.pdf::7][During regex construction a ^ prefix is added to t..., page 7]]
+:PROPERTIES:
+:DATETIME: 2024-04-19 18:35:22.019 UTC
+:END:
+#+begin_quote
+During regex construction a ^ prefix is added to the regex from the grammar to make sure that the
+content is matched at the current input position.
+#+end_quote
+
+** [[pdf:dir2/Rustemo book.pdf::52][On each code generation the existing <>_actions.rs..., page 52]]
+:PROPERTIES:
+:DATETIME: 2024-04-19 18:35:43.116 UTC
+:END:
+#+begin_quote
+On each code generation the existing <>_actions.rs file is parsed using syn crate and each type and
+action that is missing in the existing file is regenerated at the end of the file while the existing
+items are left untouched. The only items that cannot be preserved are non-doc comments.
+#+end_quote
+
+** [[pdf:dir2/Rustemo book.pdf::52][E::Pow(Pow {  base: Box::new(base),  exp: Box::new..., page 52]]
+:PROPERTIES:
+:DATETIME: 2024-04-19 18:35:48.596 UTC
+:END:
+#+begin_quote
+E::Pow(Pow {  base: Box::new(base),  exp: Box::new(exp),  })
+#+end_quote
+
