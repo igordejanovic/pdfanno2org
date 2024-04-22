@@ -108,7 +108,7 @@ impl Convertor {
                     title_written = true;
                 }
 
-                if prev_chapter_title != chapter_title {
+                if prev_chapter_title != chapter_title && !chapter_title.is_empty() {
                     writeln!(self.output, "** {}", chapter_title)?;
                     prev_chapter_title = chapter_title.into();
                 }
