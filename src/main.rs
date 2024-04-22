@@ -22,6 +22,14 @@ struct Cli {
     output: Option<PathBuf>,
 }
 
+// In case of error we'll skip annotation and continue.
+macro_rules! skip {
+    ($reason:literal) => {
+        eprintln!(r"Warning: {}. Skipping annotation.", $reason);
+        continue
+    };
+}
+
 struct Convertor {
     output: File,
     output_path: PathBuf,
@@ -44,46 +52,56 @@ impl Convertor {
                     continue;
                 };
 
-                let contents = String::from_utf8_lossy(annotation
+                let contents = String::from_utf8_lossy(
+                    annotation
                         .get(b"Contents")
                         .and_then(Object::as_str)
-                        .unwrap_or(b"")).into_owned();
+                        .unwrap_or(b""),
+                )
+                .into_owned();
                 // onyxtag keeps all the interesting data.
                 // we are not supporting highlight created by other means at
                 // the moment.
-                let onyxtag = serde_json::from_slice::<Value>(
-                    String::from_utf8_lossy(annotation
-                        .get(b"onyxtag")
-                        .and_then(Object::as_str)
-                        .unwrap_or(b"")).as_bytes()
-                )?;
+                let Ok(onyxtag) = serde_json::from_slice::<Value>(
+                    String::from_utf8_lossy(
+                        annotation
+                            .get(b"onyxtag")
+                            .and_then(Object::as_str)
+                            .unwrap_or(b""),
+                    )
+                    .as_bytes(),
+                ) else {
+                    skip!("Invalid JSON in onyxtag");
+                };
 
-                let extra_attr = serde_json::from_str::<Value>(
+                let Ok(extra_attr) = serde_json::from_str::<Value>(
                     onyxtag.get("extra_attr").unwrap().as_str().unwrap(),
-                )?;
+                ) else {
+                    skip!("Invalid JSON in onyxtag");
+                };
 
-                let chapter_title = extra_attr
-                    .get("chapterTitle")
-                    .unwrap()
-                    .as_str()
-                    .unwrap()
-                    .to_string();
-                let quote = wrap(
-                    &extra_attr
-                        .get("quote")
-                        .unwrap()
-                        .as_str()
-                        .unwrap()
-                        .replace(['\r', '\n'], " ")
-                        .replace("  ", " "),
-                    100,
-                )
-                .join("\n");
+                fn get_str_value<'i>(v: &'i Value, key: &str) -> Option<&'i str> {
+                    v.get(key)?.as_str()
+                }
+                fn get_i64_value(v: &Value, key: &str) -> Option<i64> {
+                    v.get(key)?.as_i64()
+                }
+
+                let Some(chapter_title) = get_str_value(&extra_attr, "chapterTitle") else {
+                    skip!("Cannot extract 'chapterTitle'");
+                };
+
+                let Some(quote) = get_str_value(&extra_attr, "quote") else {
+                    skip!("Cannot extract 'quote'");
+                };
+                let quote =
+                    wrap(&quote.replace(['\r', '\n'], " ").replace("  ", " "), 100).join("\n");
+
 
                 let timestamp = DateTime::from_timestamp_millis(
-                    extra_attr.get("createdAt").unwrap().as_i64().unwrap(),
+                    get_i64_value(&extra_attr, "createdAt").unwrap_or_default()
                 )
-                .unwrap();
+                .unwrap_or_default();
 
                 if !title_written {
                     writeln!(self.output, "* [[pdf:{relative_path}][{relative_path}]]")?;
@@ -92,17 +110,13 @@ impl Convertor {
 
                 if prev_chapter_title != chapter_title {
                     writeln!(self.output, "** {}", chapter_title)?;
-                    prev_chapter_title = chapter_title.clone();
+                    prev_chapter_title = chapter_title.into();
                 }
 
                 writeln!(
                     self.output,
                     "**{} [[pdf:{relative_path}::{}][{}..., page {}]]",
-                    if !chapter_title.is_empty() {
-                        "*"
-                    } else {
-                        ""
-                    },
+                    if !chapter_title.is_empty() { "*" } else { "" },
                     page_num,
                     quote.chars().take(50).collect::<String>(),
                     page_num
@@ -141,8 +155,13 @@ impl Convertor {
             let relative_path =
                 diff_paths(path, self.output_path.canonicalize()?.parent().unwrap())
                     .unwrap_or(path.to_path_buf());
-            let relative_path_str = String::from(relative_path.as_os_str().to_str().unwrap());
-            let annotations_for_file = self.extract_annotations(document, relative_path_str)?;
+            let relative_path_str = String::from(relative_path.as_os_str().to_string_lossy());
+            let Ok(annotations_for_file) = self.extract_annotations(document, relative_path_str)
+            else {
+                eprintln!("Error processing file. Skipping");
+                println!();
+                continue;
+            };
             println!(" ... {annotations_for_file} annotation(s)");
             files += 1;
             annotations += annotations_for_file;
