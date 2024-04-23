@@ -10,7 +10,7 @@ use std::{
 use textwrap::wrap;
 
 use clap::Parser;
-use ignore::Walk;
+use ignore::WalkBuilder;
 use lopdf::{Document, Object};
 
 #[derive(Parser)]
@@ -20,6 +20,15 @@ struct Cli {
     root: PathBuf,
     #[clap(short, long, value_name="output file", value_hint = clap::ValueHint::FilePath)]
     output: Option<PathBuf>,
+
+    #[clap(long, help = "ignore .gitignore file")]
+    no_git_ignore: bool,
+
+    #[clap(long, help = "ignore .ignore file")]
+    no_ignore: bool,
+
+    #[clap(long, help = "include hidden files")]
+    hidden: bool,
 }
 
 // In case of error we'll skip annotation and continue.
@@ -97,9 +106,8 @@ impl Convertor {
                 let quote =
                     wrap(&quote.replace(['\r', '\n'], " ").replace("  ", " "), 100).join("\n");
 
-
                 let timestamp = DateTime::from_timestamp_millis(
-                    get_i64_value(&extra_attr, "createdAt").unwrap_or_default()
+                    get_i64_value(&extra_attr, "createdAt").unwrap_or_default(),
                 )
                 .unwrap_or_default();
 
@@ -136,10 +144,21 @@ impl Convertor {
         Ok(annotation_count)
     }
 
-    fn process_files(&mut self, root: &Path) -> Result<()> {
+    fn process_files(
+        &mut self,
+        root: &Path,
+        git_ignore: bool,
+        ignore: bool,
+        hidden: bool,
+    ) -> Result<()> {
         let mut files = 0;
         let mut annotations = 0;
-        for entry in Walk::new(root) {
+        for entry in WalkBuilder::new(root)
+            .git_ignore(git_ignore)
+            .ignore(ignore)
+            .hidden(hidden)
+            .build()
+        {
             let entry = entry?;
             let path = entry.path();
             if path.is_dir()
@@ -193,7 +212,7 @@ fn main() -> Result<()> {
         output: File::create(output.clone())?,
         output_path: output.clone(),
     };
-    convertor.process_files(&path)?;
+    convertor.process_files(&path, !cli.no_git_ignore, !cli.no_ignore, cli.hidden)?;
     println!("Output: {:?}", output.canonicalize()?);
     Ok(())
 }
